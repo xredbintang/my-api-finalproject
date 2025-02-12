@@ -24,6 +24,7 @@ Route::controller(AuthController::class)->prefix('access')->group(function(){
     Route::post('/password-reset','resetPassword');
 });
     Route::post('/admin/login', [AdminController::class, 'login']);
+    Route::post('/admin/logout', [AdminController::class, 'logout']);
 
 //Verify token saya gunakan untuk mengecek jika yang hanya bisa dimasukkan adalah accesstoken bukan refresh token
 
