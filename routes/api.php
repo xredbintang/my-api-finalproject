@@ -33,8 +33,8 @@ Route::middleware(['auth:api',VerifyAccessToken::class])->group(function(){
     Route::apiResource('/alat',AlatController::class);
     Route::apiResource('/kategori',KategoriController::class);
     Route::apiResource('/pelanggan',PelangganController::class);
-    Route::apiResource('/data-pelanggan',PelangganDataController::class);
+    Route::apiResource('/data/pelanggan',PelangganDataController::class);
     Route::apiResource('/penyewaan',PenyewaanController::class);
-    Route::apiResource('/penyewaan-detail',PenyewaanDetailController::class);
+    Route::apiResource('/detail/penyewaan',PenyewaanDetailController::class);
 });
 
