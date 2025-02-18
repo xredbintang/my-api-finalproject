@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PenyewaanRequest;
+use App\Models\Alat;
 use App\Models\Penyewaan;
+use App\Models\PenyewaanDetail;
 use Exception;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class PenyewaanController extends Controller
 {
@@ -44,16 +47,72 @@ class PenyewaanController extends Controller
         }
     }
 
-    public function update(PenyewaanRequest $request, int $penyewaan_id) {
-        try {
-            $data = Penyewaan::find($penyewaan_id);
-            if (!$data) return $this->jsonResponse(false, "Penyewaan dengan id {$penyewaan_id} tidak ditemukan", null, null, 400);
+    // public function update(PenyewaanRequest $request, int $penyewaan_id) {
+    //     try {
+    //         $data = Penyewaan::find($penyewaan_id);
+    //         if (!$data) return $this->jsonResponse(false, "Penyewaan dengan id {$penyewaan_id} tidak ditemukan", null, null, 400);
             
-            $data->update($request->validated());
+    //         $data->update($request->validated());
+    //         Cache::forget('penyewaan');
+    //         Cache::forget("penyewaan_{$penyewaan_id}");
+    //         return $this->jsonResponse(true, 'Sukses mengupdate data penyewaan', $data);
+    //     } catch (Exception $error) {
+    //         return $this->jsonResponse(false, 'Terjadi kesalahan pada server', null, $error->getMessage(), 500);
+    //     }
+    // }
+    public function update(PenyewaanRequest $request, int $penyewaan_id)
+    {
+        DB::beginTransaction();
+        try {
+            // Cari data penyewaan
+            $penyewaan = Penyewaan::find($penyewaan_id);
+            if (!$penyewaan) {
+                return $this->jsonResponse(false, "Penyewaan dengan id {$penyewaan_id} tidak ditemukan", null, null, 400);
+            }
+
+            // Simpan status sebelumnya
+            $previousStatus = $penyewaan->penyewaan_sttskembali;
+
+            // Update status penyewaan
+            $penyewaan->update($request->validated());
+
+            // Ambil status baru
+            $newStatus = $request->input('penyewaan_sttskembali');
+
+            // Jika status diubah menjadi "Sudah kembali"
+            if ($newStatus === 'Sudah kembali' && $previousStatus === 'Belum kembali') {
+                // Ambil semua detail penyewaan
+                $details = PenyewaanDetail::where('penyewaan_detail_penyewaan_id', $penyewaan_id)->get();
+
+                foreach ($details as $detail) {
+                    $alat = Alat::find($detail->penyewaan_detail_alat_id);
+                    if ($alat) {
+                        // Tambahkan stok alat
+                        $alat->increment('alat_stok', $detail->penyewaan_detail_jumlah);
+                    }
+                }
+            }
+
+            // Jika status diubah kembali menjadi "Belum kembali"
+            if ($newStatus === 'Belum kembali' && $previousStatus === 'Sudah kembali') {
+                // Ambil semua detail penyewaan
+                $details = PenyewaanDetail::where('penyewaan_detail_penyewaan_id', $penyewaan_id)->get();
+
+                foreach ($details as $detail) {
+                    $alat = Alat::find($detail->penyewaan_detail_alat_id);
+                    if ($alat) {
+                        // Kurangi stok alat
+                        $alat->decrement('alat_stok', $detail->penyewaan_detail_jumlah);
+                    }
+                }
+            }
+
+            DB::commit();
             Cache::forget('penyewaan');
             Cache::forget("penyewaan_{$penyewaan_id}");
-            return $this->jsonResponse(true, 'Sukses mengupdate data penyewaan', $data);
+            return $this->jsonResponse(true, 'Sukses mengupdate data penyewaan', $penyewaan);
         } catch (Exception $error) {
+            DB::rollBack();
             return $this->jsonResponse(false, 'Terjadi kesalahan pada server', null, $error->getMessage(), 500);
         }
     }
