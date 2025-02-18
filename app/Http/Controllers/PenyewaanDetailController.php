@@ -35,34 +35,20 @@ class PenyewaanDetailController extends Controller
         }
     }
 
-    // public function store(PenyewaanDetailRequest $request) {
-    //     try {
-    //         $data = PenyewaanDetail::create($request->validated());
-    //         Cache::forget('penyewaan_detail');
-    //         return $this->jsonResponse(true, 'Sukses menambahkan data penyewaan detail', $data);
-    //     } catch (Exception $error) {
-    //         return $this->jsonResponse(false, 'Terjadi kesalahan pada server', null, $error->getMessage(), 500);
-    //     }
-    // }
-
     public function store(PenyewaanDetailRequest $request)
     {
         DB::beginTransaction();
         try {
-            // Validasi input
             $validated = $request->validated();
 
-            // Ambil data alat
             $alat = Alat::find($validated['penyewaan_detail_alat_id']);
 
             if (!$alat || $alat->alat_stok < $validated['penyewaan_detail_jumlah']) {
                 throw new Exception("Stok alat {$alat->alat_nama} tidak mencukupi.");
             }
 
-            // Kurangi stok alat
             $alat->decrement('alat_stok', $validated['penyewaan_detail_jumlah']);
 
-            // Simpan data penyewaan detail
             $data = PenyewaanDetail::create($validated);
 
             DB::commit();
