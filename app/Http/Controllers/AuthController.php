@@ -7,6 +7,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -18,6 +19,15 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
+    public function getUser()
+    {
+        $loggedInUsers = User::where('is_logged_in', true)->get();
+
+    return response()->json([
+        'message' => 'List of logged-in users',
+        'users' => $loggedInUsers,
+    ]);
+    }
     public function register(RegisterRequest $request){
         $data = $request->validated();
     
@@ -38,6 +48,11 @@ class AuthController extends Controller
     public function logout(Request $request)
 {
     try {
+        $user = auth('api')->user();
+
+        if ($user) {
+            $user->update(['is_logged_in' => false]);
+        }
         auth('api')->logout();
         auth('api')->invalidate(true);        
         return response()->json([
@@ -150,6 +165,7 @@ public function login(LoginRequest $request)
     }
 
         $user = auth('api')->user();
+        $user->update(['is_logged_in' => true]);
         $user->latest_access_token = $token;
         $user->save();
 

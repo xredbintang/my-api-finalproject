@@ -26,6 +26,7 @@ Route::controller(AuthController::class)->prefix('access')->group(function(){
 //Verify token saya gunakan untuk mengecek jika yang hanya bisa dimasukkan adalah accesstoken bukan refresh token
 
 Route::middleware(['auth:api',VerifyAccessToken::class])->group(function(){
+    Route::get('/user', [AuthController::class, 'getUser']);
     Route::post('/logout',[AuthController::class,'logout']);
     Route::apiResource('/alat',AlatController::class);
     Route::apiResource('/kategori',KategoriController::class);
