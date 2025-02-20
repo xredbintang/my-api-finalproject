@@ -49,6 +49,7 @@
     MAIL_FROM_ADDRESS="emailanda@gmail.com"
     MAIL_FROM_NAME="RESET PASSWORD" //bisa disesuaikan
     ```
+    Cara mendapatkan app password : Masuk ke setting google account / manage, pada bagian security, search "APP PASSWORD" lalu masukkan nama projek (terserah) dan anda akan langsung         mendapatkan app passwordnya 
    
 4. Jalankan migrasi:
    ```bash
