@@ -28,7 +28,6 @@ class PenyewaanDetailRequest extends FormRequest
             'penyewaan_detail_penyewaan_id' => 'required|exists:penyewaan,penyewaan_id',
             'penyewaan_detail_alat_id' => 'required|exists:alat,alat_id',
             'penyewaan_detail_jumlah' => 'required|integer|min:1',
-            'penyewaan_detail_subharga' => 'required|integer|min:0',
         ];
     }
         public function messages()
@@ -41,9 +40,6 @@ class PenyewaanDetailRequest extends FormRequest
             'penyewaan_detail_jumlah.required' => 'Jumlah alat wajib diisi.',
             'penyewaan_detail_jumlah.integer' => 'Jumlah alat harus berupa angka.',
             'penyewaan_detail_jumlah.min' => 'Jumlah alat minimal 1.',
-            'penyewaan_detail_subharga.required' => 'Subharga wajib diisi.',
-            'penyewaan_detail_subharga.integer' => 'Subharga harus berupa angka.',
-            'penyewaan_detail_subharga.min' => 'Subharga tidak boleh kurang dari 0.',
         ];
     }
     public function failedValidation(Validator $validator)

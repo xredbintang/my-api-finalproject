@@ -39,7 +39,9 @@ class PenyewaanController extends Controller
 
     public function store(PenyewaanRequest $request) {
         try {
-            $data = Penyewaan::create($request->validated());
+            $validated = $request->validated();
+            $validated['penyewaan_totalharga'] = 0;
+            $data = Penyewaan::create($validated);
             Cache::forget('penyewaan');
             return $this->jsonResponse(true, 'Sukses membuat data penyewaan', $data);
         } catch (Exception $error) {
@@ -68,7 +70,6 @@ class PenyewaanController extends Controller
                 foreach ($details as $detail) {
                     $alat = Alat::find($detail->penyewaan_detail_alat_id);
                     if ($alat) {
-                        // Tambahkan stok alat
                         $alat->increment('alat_stok', $detail->penyewaan_detail_jumlah);
                     }
                 }
@@ -81,7 +82,6 @@ class PenyewaanController extends Controller
                 foreach ($details as $detail) {
                     $alat = Alat::find($detail->penyewaan_detail_alat_id);
                     if ($alat) {
-                        // Kurangi stok alat
                         $alat->decrement('alat_stok', $detail->penyewaan_detail_jumlah);
                     }
                 }
@@ -101,8 +101,11 @@ class PenyewaanController extends Controller
         try {
             $data = Penyewaan::find($penyewaan_id);
             if (!$data) return $this->jsonResponse(false, 'Penyewaan tidak ditemukan', null, null, 400);
-            
+    
+            PenyewaanDetail::where('penyewaan_detail_penyewaan_id', $penyewaan_id)->delete();
+    
             $data->delete();
+    
             Cache::forget('penyewaan');
             Cache::forget("penyewaan_{$penyewaan_id}");
             return $this->jsonResponse(true, 'Sukses menghapus data penyewaan', $data);
