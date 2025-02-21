@@ -1,6 +1,7 @@
 # API Project
 
 # Fitur
+- **TOKEN SANGAT AMAN DAN TERJAMIN BERHASIL 100%**: TOKEN SESUAI DENGAN PENGGUNAANNYA.
 - **Refresh Token**: Expired setelah **7 minggu**. => bisa diubah di file jwt.php pada folder config
 - **Akses Token**: Expired setelah **2 jam**. => bisa diubah di file jwt.php pada folder config
 - **Refresh Akses Token**: Untuk mendapatkan akses token baru, kirimkan refresh token ke endpoint berikut:
@@ -9,10 +10,11 @@
   ```
   Jika pengguna api ini memasukkan aksestoken untuk refreshtoken maka tidak akan bisa!
   Setelah melakukan refresh token, maka aksestoken yang lama tidak bisa digunakan!
-
+  
+- **Harga penyewaan sudah otomatis untuk subharga dan totalharga day by day**:
+- **Manajemen Stok**: Stok alat akan berkurang secara otomatis jika disewa.
 - **Reset password User**: untuk melakukan reset password dengan token yang dikirimkan ke email asli mengunakan smtp gmail.
 - **Get User yang Sedang Login**: Harus menggunakan akses token.
-- **Manajemen Stok**: Stok alat akan berkurang secara otomatis jika disewa.
 - **Cache Optimization**: Memanfaatkan cache untuk meningkatkan performa API.
 - **Middleware**: Cek apakah yang dimasukkan di bearer untuk mengelola data adalah aksestoken, jika refreshtoken maka gagal, karena refreshtoken hanya untuk mendapatkan aksestoken baru.
 
