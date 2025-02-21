@@ -11,7 +11,7 @@
   Jika pengguna api ini memasukkan aksestoken untuk refreshtoken maka tidak akan bisa!
   Setelah melakukan refresh token, maka aksestoken yang lama tidak bisa digunakan!
   
-- **Harga penyewaan sudah otomatis untuk subharga dan totalharga day by day**:
+- **Harga penyewaan sudah otomatis untuk subharga dan totalharga day by day**: Tidak perlu mengisi subharga dan totalharga di endpoint penyewaan dan penyewaandetail
 - **Manajemen Stok**: Stok alat akan berkurang secara otomatis jika disewa.
 - **Reset password User**: untuk melakukan reset password dengan token yang dikirimkan ke email asli mengunakan smtp gmail.
 - **Get User yang Sedang Login**: Harus menggunakan akses token.
